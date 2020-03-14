@@ -2,18 +2,18 @@
 /*
  * @Author: your name
  * @Date: 2020-03-07 16:35:36
- * @LastEditTime: 2020-03-07 16:37:12
- * @LastEditors: your name
+ * @LastEditTime: 2020-03-13 11:27:57
+ * @LastEditors: Please set LastEditors
  * @Description: In User Settings Edit
  * @FilePath: \questionnaire\application\api\controller\v1\Options.php
  */
 
-namespace app\api\controller\v1;
+namespace app\api\controller\v2;
 
 use app\api\model\Options as OptionsModel;
 use think\Request;
 
-class Options{
+class Option{
 
 	public function getOptionss()
 	{
@@ -47,7 +47,7 @@ class Options{
 	public function delete($id)
 	{
 	    OptionsModel::destroy($id);	    
-	    return '删除成功';
+	    return writeJson(201,'','删除成功');
 	}
 	
 }

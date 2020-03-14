@@ -12,7 +12,7 @@ namespace app\api\model;
 
 class Options extends BaseModel
 {
-    public function question()
+    public function questions()
     {
         return $this->belongsTo('Question','q_id','id');
     }

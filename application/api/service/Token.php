@@ -2,7 +2,7 @@
 /*
  * @Author: your name
  * @Date: 2020-03-02 17:24:20
- * @LastEditTime: 2020-03-04 16:18:26
+ * @LastEditTime: 2020-03-12 17:03:51
  * @LastEditors: Please set LastEditors
  * @Description: In User Settings Edit
  * @FilePath: \questionnaire\application\api\service\Token.php
@@ -14,6 +14,7 @@ namespace app\api\service;
 
 use think\facade\Cache;
 use app\api\model\Admin as AdminModel;
+use app\lib\exception\ComException;
 use think\Exception;
 use think\facade\Request;
 
@@ -61,9 +62,20 @@ class Token
     public static function getNowToken($key)       //获取缓存里的token数据
     {
         $token = self::getHeader();
+        if (!$token) {
+            throw new ComException([
+                'code' => 403,
+                'msg' => '令牌不存在',
+                'error_code' => 10000
+            ]);
+        }
         $vars = Cache::get($token);
         if (!$vars) {
-            throw new Exception('令牌不存在');
+            throw new ComException([
+                'code' => 403,
+                'msg' => '令牌不存在',
+                'error_code' => 10000
+            ]);
         } else {
             return $vars[$key];
         }
@@ -85,7 +97,7 @@ class Token
     public static function valToken()
     {
         $ao = request()->header('authorization');
-        $token = explode(' ',$ao)[1];
+        $token = explode(' ', $ao)[1];
         if (!$token) {
             return false;
         }
@@ -99,7 +111,7 @@ class Token
     public static function getHeader()
     {
         $ao = request()->header('authorization');
-        $token = explode(' ',$ao)[1];
+        $token = explode(' ', $ao)[1];
         return $token;
     }
 }

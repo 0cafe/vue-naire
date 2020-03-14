@@ -5,10 +5,7 @@ namespace app\api\controller\v1;
 use app\api\model\Question as QuestionModel;
 use think\Request;
 
-class Question extends Base{
-    protected $beforeActionList = [
-        'checkAuth'  =>  ['only'=>'create,update,delete'],
-    ];
+class Question{
 
 	public function getQuestions()
 	{

@@ -5,11 +5,9 @@ namespace app\api\controller\v1;
 use app\api\model\Wenjuan as WenjuanModel;
 use think\Request;
 
-class Wenjuan extends Base{
+class Wenjuan{
 
-    protected $beforeActionList = [
-        'checkAuth'  =>  ['only'=>'create,update,delete'],
-    ];
+
 
 	public function getWenjuans()
 	{

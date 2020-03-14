@@ -1,19 +1,19 @@
 <?php
 /*
  * @Author: your name
- * @Date: 2020-03-07 16:35:36
- * @LastEditTime: 2020-03-07 16:37:28
- * @LastEditors: your name
+ * @Date: 2020-03-02 17:24:20
+ * @LastEditTime: 2020-03-07 16:41:41
+ * @LastEditors: Please set LastEditors
  * @Description: In User Settings Edit
  * @FilePath: \questionnaire\application\api\controller\v1\Result.php
  */
-namespace app\api\controller\v1;
+namespace app\api\controller\v2;
 
 
 use app\api\model\Result as ResultModel;
-use think\Request;
+use think\facade\Request;
 
-class Result {
+class Result{
 
 	public function getResults()
 	{
@@ -27,12 +27,12 @@ class Result {
 		return json($result);
 	}
 	
-	public function create(Request $request)
+	public function create()
 	{   
-		$user = new ResultModel;
-	    $params = input('');
-        $user->allowField(true)->saveAll($params);  //过滤非表单字段value 不然会插入失败	    
-	    return '新建成功';
+		$result = new ResultModel;
+		$params = Request::post();
+        $result->allowField(true)->saveAll($params);  //过滤非表单字段value 不然会插入失败	    
+	    return writeJson(201,'','提交成功');
 	}
 	
 	public function update(Request $request)
