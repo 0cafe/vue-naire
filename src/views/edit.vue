@@ -1,5 +1,10 @@
 <template>
-  <div class="container">
+  <div class="container" v-loading="loading">
+    <div class="toolbar">
+      <!-- <div class="ntitle">编辑</div> -->
+      <div></div>
+      <!-- <div class="el-icon-back" @click="back"></div> -->
+    </div>
     <el-form :model="form" label-width="80px" ref="form">
       <el-form-item label="问卷标题">
         <el-input v-model="form.n_title" maxlength="30" show-word-limit></el-input>
@@ -48,8 +53,7 @@
     </div>
 
     <div class="submit">
-      <el-button type="primary" @click="submitForm(0)">生成问卷</el-button>
-      <el-button type="success" @click="submitForm(1)">发布问卷</el-button>
+      <el-button type="success" @click="submitForm()">修改问卷</el-button>
     </div>
   </div>
 </template>
@@ -57,7 +61,9 @@
 <script>
   import {
     get,
-    post
+    post,
+    put,
+    _delete
   } from '@/axios/api.js'
   import {
     errorToast,
@@ -67,37 +73,29 @@
   export default {
     data() {
       return {
+        loading: true,
         flag: true,
-        form: {
-          n_title: '',
-          n_status: 0,
-          questions: [{
-              q_content: '题目内容',
-              q_type: '单选',
-              option: [{
-                o_value: '选项一'
-              }, ]
-            },
-            {
-              q_content: '题目二',
-              q_type: '单选',
-              option: [{
-                o_value: '选项一'
-              }, ]
-            },
-          ],
-        }
+        form: {}
       }
     },
     methods: {
+      //获取
+      async getNaire(id) {
+        await get('/naire/' + id)
+          .then(res => {
+            console.log(res)
+            this.form = res
+            this.loading = false
+          })
+      },
       //提交
-      submitForm(status) {
-        this.form.n_status = status
+      submitForm() {
+        // this.form.n_status = status
         let validated = this.validate(this.form)
         if (!validated) {
           return
         }
-        post('naire', this.form).then(res => {
+        put('naire/edit', this.form).then(res => {
           if (res.error_code === 0) {
             successToast(res.msg)
             this.$router.push('/home/list')
@@ -119,11 +117,29 @@
         }
         this.form.questions.push(question)
       },
-      delQuestion(id) {
+      async delQuestion(id) {
+
         if (this.form.questions.length == 1) {
           return warningToast('已经是最后一题啦')
         }
-        this.form.questions.splice(id, 1)
+
+        let q_id = this.form.questions[id].id
+        if (this.form.questions[id].id) {
+          this.$confirm('此操作将永久删除该问题, 是否继续?', '提示', {
+            confirmButtonText: '确定',
+            cancelButtonText: '取消',
+            type: 'warning'
+          }).then(async () => {
+            let res = await _delete('question/' + q_id)
+            console.log(res.data)
+            this.form.questions.splice(id, 1)
+            if (res.data.error_code === 0) {
+              successToast('删除成功')
+            }
+          })
+        } else {
+          this.form.questions.splice(id, 1)
+        }
       },
       //添加 多选题
       addMultiplyQuestion() {
@@ -138,7 +154,7 @@
       },
       //添加选项
       addOption(qid) {
-        if(this.form.questions[qid].option.length >= 7){
+        if (this.form.questions[qid].option.length >= 7) {
           return warningToast('一题最多添加7个选项噢')
         }
         let option = {
@@ -146,11 +162,28 @@
         }
         this.form.questions[qid].option.push(option)
       },
-      delOption(qid, oid) {
+      async delOption(qid, oid) {
         if (this.form.questions[qid].option.length == 1) {
           return warningToast('已经是最后一个啦')
         }
-        this.form.questions[qid].option.splice(oid, 1)
+
+        let o_id = this.form.questions[qid].option[oid].id
+        if (this.form.questions[qid].option[oid].id) {
+          this.$confirm('此操作将永久删除该选项, 是否继续?', '提示', {
+            confirmButtonText: '确定',
+            cancelButtonText: '取消',
+            type: 'warning'
+          }).then(async () => {
+            await _delete('option/' + o_id).then((res) => {
+              if (res.error_code === 0) {
+                successToast('删除成功')
+              }
+              this.form.questions[qid].option.splice(oid, 1)
+            })
+          })
+        } else {
+          this.form.questions[qid].option.splice(oid, 1)
+        }
       },
 
       // 表单验证规则
@@ -166,20 +199,6 @@
           return false
         }
 
-        // let flag = true;
-        // let questions = this.form.questions
-        // for (var i = 0; i < questions.length; i++) {
-        //   if (questions[i].q_content == '' || !questions[i].q_content) {
-        //     errorToast('请完整填写')
-        //     return flag = false
-        //   }
-        //   for (let j = 0; j < questions[i].option.length; i++) {
-        //     if (!questions[i].option[j].o_value) {
-        //       errorToast('请完整填写')
-        //       return flag = false
-        //     }
-        //   }
-        // }
         data.questions.forEach((item, i) => {
           if (item.q_content == '' || !item.q_content) {
             errorToast('请完整填写')
@@ -193,7 +212,15 @@
           })
         })
         return flag
-      }
+      },
+      //
+      back() {
+        this.$router.back()
+      },
+    },
+
+    async created() {
+      this.getNaire(this.$route.params.id)
     }
   }
 </script>
@@ -257,5 +284,25 @@
     div {
       margin-right: 20px;
     }
+  }
+
+  .toolbar {
+    display: flex;
+    justify-content: space-between;
+    padding: 0 100px 0px 50px;
+    font-size: 22px;
+    height: 60px;
+    line-height: 60px;
+    width: 100%;
+  }
+
+  .el-icon-back {
+    font-size: 0.5rem;
+    color: #0a8fee !important;
+  }
+
+  .ntitle {
+    color: #0a8fee;
+    font-family: "Microsoft JhengHei";
   }
 </style>

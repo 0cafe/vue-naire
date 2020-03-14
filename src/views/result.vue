@@ -1,8 +1,8 @@
 <template>
   <div class="container" v-loading="loading">
     <div class="toolbar">
-    <div class="ntitle">{{title}}</div>
-    <div class="el-icon-back" @click="back"></div>
+      <div class="ntitle">{{title}}</div>
+      <div class="el-icon-back" @click="back">关闭</div>
     </div>
     <div class="question" v-for="(item,i) in questions">
       <!-- <p>{{i+1}}.{{item.q_content}}</p> -->
@@ -31,7 +31,7 @@
       async getNaire(id) {
         await this.$api.get('/v1/naire/' + id)
           .then((res) => {
-            console.log(res.data)
+            // console.log(res.data)
             this.title = res.data.n_title
           })
       },
@@ -39,7 +39,7 @@
       async getQuestion(id) {
         await this.$api.get('/v1/question/' + id)
           .then(res => {
-            console.log(res.data)
+            // console.log(res.data)
             this.questions = res.data
           })
       },
@@ -47,7 +47,7 @@
       async getReults(id) {
         await this.$api.get('/v1/result/' + id)
           .then(res => {
-            console.log(res.data)
+            // console.log(res.data)
             this.result = res.data
           })
       },
@@ -55,7 +55,7 @@
       async getOption(id) {
         await this.$api.get('/v1/options/' + id)
           .then(res => {
-            console.log(res.data)
+            // console.log(res.data)
             this.options = res.data
           })
       },
@@ -150,7 +150,7 @@
             }
             Data.push(objj)
           }
-          console.log(Data)
+          // console.log(Data)
           myChart.setOption({
             title: {
               text: data.q_content
@@ -190,7 +190,7 @@
         })
       },
       //
-      back(){
+      back() {
         this.$emit('close')
       }
     },
@@ -217,20 +217,27 @@
 </script>
 
 <style scoped="scoped">
-  .toolbar{
+  .container {
+
+  }
+
+  .toolbar {
     display: flex;
     justify-content: space-between;
     padding: 0 100px 0px 50px;
     font-size: 22px;
-    height: 60px;
-    line-height: 60px;
+    height: 50px;
+    line-height: 50px;
     width: 100%;
   }
-  .el-icon-back{
-    font-size: 0.5rem;
+
+  .el-icon-back {
+    font-size: 0.2rem;
+    cursor: pointer;
     color: #0a8fee !important;
   }
-  .ntitle{
+
+  .ntitle {
     color: #0a8fee;
     font-family: "Microsoft JhengHei";
   }

@@ -11,6 +11,7 @@ import store from './vuex/store.js'
 import ElementUI from 'element-ui';
 import 'element-ui/lib/theme-chalk/index.css';
 import '@/assets/styles/index.scss'
+import valitoken from '@/common/token.js'
 
 Vue.config.productionTip = false
 Vue.prototype.$api = api; // 将api挂载到vue的原型上复制代码
@@ -30,6 +31,9 @@ window.onresize = function() {
   flex();
 }
 
+valitoken()
+
+
 if (localStorage.token && localStorage.username) {
   store.state.token = localStorage.token
   store.state.username = localStorage.username
@@ -38,10 +42,12 @@ if (localStorage.token && localStorage.username) {
 //用router的钩子函数 设置访问权限
 router.beforeEach((to, from, next) => {
   // 获取 JWT Token
-  if (to.meta.requiresAuth) {
+  if (to.meta.requireAuth ){
+    console.log('auh')
     // 判断该路由是否需要登录权限
     if (localStorage.getItem('token')) {
       // 通过获取当前的token是否存在
+      console.log('?')
       next()
     } else {
       next({

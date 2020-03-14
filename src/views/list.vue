@@ -1,12 +1,12 @@
 <template>
   <div class="container">
-    <el-table v-if="!isResult" v-loading="loading" :data="tableData" border>
+    <el-table v-if="!isResult" v-loading="loading" :data="tableData">
       <el-table-column prop="create_time" label="创建时间" width="200">
       </el-table-column>
 
       <el-table-column prop="n_title" label="问卷标题" width="600">
         <template slot-scope="scope">
-          <router-link :to="'/fill/'+scope.row.n_id + '/' + scope.row.n_status ">
+          <router-link :to="'/naire/'+scope.row.id">
             {{scope.row.n_title}}
           </router-link>
         </template>
@@ -16,7 +16,8 @@
           <!-- <span>{{ scope.row.n_status == 1 ? '发布中':'已截止' }}</span>
         <el-button type="warning" size="small" @click="status(scope.row)">发布/截止</el-button> -->
           <!-- 坑:这里active-value后台给的是number类型  加""不生效 -->
-          <el-switch v-model="scope.row.n_status" :active-value=1 :inactive-value=0 active-text="发布中" inactive-text="截止">
+          <el-switch @change="modifyStatus(scope.row.id)" v-model="scope.row.n_status" :active-value=1 :inactive-value=0
+            active-text="发布中" inactive-text="截止">
           </el-switch>
         </template>
 
@@ -35,7 +36,7 @@
             <!--这里下拉菜单item使用@click.native  给组件绑定点击事件要加native 相当于emit('click'.fn)-->
             <el-dropdown-menu slot="dropdown">
               <el-dropdown-item @click.native="toResult(scope.row.id)">查看结果</el-dropdown-item>
-              <el-dropdown-item @click.native="toEdit(scope.row.id)">编辑</el-dropdown-item>
+              <el-dropdown-item @click.native="toEdit(scope.row)">编辑</el-dropdown-item>
               <el-dropdown-item @click.native="toCtrl(scope.row.id)">复制链接</el-dropdown-item>
             </el-dropdown-menu>
           </el-dropdown>
@@ -43,7 +44,8 @@
         </template>
       </el-table-column>
     </el-table>
-    <result v-if="isResult" @close="close" :id="resultID" ></result>
+    <result v-if="isResult" @close="close" :id="resultID"></result>
+    <share-url v-if="isShare" @close="close" :url = "url"></share-url>
   </div>
 </template>
 
@@ -55,13 +57,16 @@
   import {
     get,
     post,
+    put,
     _delete
   } from '../axios/api.js'
   import result from './result.vue'
+  import shareUrl from '@/components/url.vue'
   export default {
     name: 'home',
-    components:{
-      result
+    components: {
+      result,
+      shareUrl
     },
     data() {
       return {
@@ -69,17 +74,20 @@
         Tid: '',
         tableData: [],
         loading: true,
-        resultID:'',
-        isResult:false
+        resultID: '',
+        isResult: false,
+        isEdit:false,
+        editID:'',
+        url:'',
+        isShare:false
       }
     },
     methods: {
       async GetQuestion() {
         await this.$api.get('/Naire')
           .then((res) => {
-
+            // console.log(res)
             this.tableData = res.data
-            console.log(this.tableData)
           })
         this.loading = false
       },
@@ -100,25 +108,17 @@
             })
         })
       },
-      async status(obj) {
-        if (obj.n_status == 1) {
-          obj.n_status = 0
-        } else {
-          obj.n_status = 1
-        }
-        let nowNaire = {
-          n_id: obj.n_id,
-          n_title: obj.n_title,
-          n_status: obj.n_status
-        }
-
-        await post('/updateNaire', nowNaire)
-          .then(res => {
-            successToast('修改发布状态成功')
-          })
-          .catch(err => {
-            errorToast('修改发布状态失败')
-          })
+      //
+      async modifyStatus(id) {
+        this.loading = true
+        await put('/naire/' + id).then(res => {
+          if (res.error_code == 0) {
+            setTimeout(()=>{
+              this.loading = false
+              successToast('修改发布状态成功')
+            },500)
+          }
+        })
       },
 
       // 菜单 跳转结果
@@ -126,15 +126,23 @@
         this.resultID = id
         this.isResult = true
       },
-      toEdit() {
-
+      toEdit(data) {
+        if(data.n_status == 1){
+          return errorToast('问卷发布中无法编辑')
+        }
+        this.$router.push('/edit/'+data.id)
       },
-      toCtrl() {
-
+      toCtrl(id) {
+        this.isShare = true
+        let host = window.location.host
+        let url = host + '/#/' + 'naire/' + id
+        this.url = url
       },
       //关闭组件 回到表格页面
-      close(){
+      close() {
         this.isResult = false
+        this.isEdit = false
+        this.isShare = false
       }
 
     },
@@ -150,6 +158,7 @@
   }
 
   .container {
+    margin-top: 30px;
     width: 100%;
   }
 

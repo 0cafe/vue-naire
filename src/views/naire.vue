@@ -38,16 +38,17 @@
   export default {
     data() {
       return {
+        n_id: '',
         dataArr: '',
         questions: '',
         options: [],
         selectData: [],
         answer: [],
-        checkData: [],   //选中的多选题答案
+        checkData: [], //选中的多选题答案
         loading: true,
         dData: [], //多选题的q_id
-        single:[], //单选
-        multiple:[] //多选
+        single: [], //单选
+        multiple: [] //多选
       }
     },
     methods: {
@@ -56,16 +57,21 @@
         await get('/naire/' + id)
           .then(res => {
             console.log(res)
+            if (res.n_status == 0) {
+              errorToast('该问卷已截止')
+              this.$router.push('/home/list')
+              return
+            }
             this.dataArr = res
-            this.questions = res.question
+            this.questions = res.questions
             this.loading = false
           })
       },
 
       // 提交
       async submit() {
-        let single = this.selectData.filter(d=>d)   // 过滤数组中的empty项
-        let checkData = this.checkData.filter(d=>d)
+        let single = this.selectData.filter(d => d) // 过滤数组中的empty项
+        let checkData = this.checkData.filter(d => d)
         let checkId = [];
         console.log(this.checkData)
         this.checkData.forEach((item, i) => {
@@ -78,7 +84,7 @@
           }
         })
         console.log(flag)
-        if(single.length < this.single.length || !flag){
+        if (single.length < this.single.length || !flag) {
           return errorToast('请完整填写再提交')
         }
 
@@ -86,6 +92,7 @@
         arr = single.concat(checkData)
         arr.forEach((item, i) => {
           item.o_id = item.id
+          item.n_id = this.n_id
           delete item['id']
         })
         // if (arr.length < this.questions.length) {
@@ -94,11 +101,11 @@
         console.log(arr)
         await post('/naire/answer', arr)
           .then((res) => {
-            if( !res.error_code === 0) {
+            if (!res.error_code === 0) {
               successToast('内部错误')
             }
             successToast('提交成功')
-            this.$router.push('/')
+            this.$router.push('/home/list')
           })
           .catch((err) => {
             errorToast(err)
@@ -112,7 +119,7 @@
             this.multiple.push(item)
             this.dData.push(item.id)
           }
-          if(item.q_type == '单选') {
+          if (item.q_type == '单选') {
             this.single.push(item)
           }
         })
@@ -122,38 +129,38 @@
       status(status) {
         if (status == 0) {
           errorToast('该问卷已截止')
-          this.$router.push('/')
+          this.$router.push('/home/list')
         }
       },
 
       // 去出数组空值
       removeEmpty(arr) {
-          var brr = [];
-          arr.map(function(val, index) {
-              //过滤规则为，不为空串、不为null、不为undefined，也可自行修改
-              if (val !== "" && val != undefined) {
-                  brr.push(val);
-              }
-          });
-          return brr;
+        var brr = [];
+        arr.map(function(val, index) {
+          //过滤规则为，不为空串、不为null、不为undefined，也可自行修改
+          if (val !== "" && val != undefined) {
+            brr.push(val);
+          }
+        });
+        return brr;
       },
     },
 
-    computed:{
-      singleNum(){
+    computed: {
+      singleNum() {
         let i = 0
-        this.questions.forEach((item,i)=>{
-          if(item.q_type == '单选'){
-            i = i+1
+        this.questions.forEach((item, i) => {
+          if (item.q_type == '单选') {
+            i = i + 1
           }
         })
         return i
       },
-      multipleNum(){
+      multipleNum() {
         let i = 0
-        this.questions.forEach((item,i)=>{
-          if(item.q_type == '多选'){
-            i = i+1
+        this.questions.forEach((item, i) => {
+          if (item.q_type == '多选') {
+            i = i + 1
           }
         })
         return i
@@ -161,6 +168,7 @@
     },
 
     async created() {
+      this.n_id = this.$route.params.id
       await this.getQuestion(this.$route.params.id)
       // console.log(this.$refs.rad)  ref作为渲染结果被创建 在初始渲染时访问不到他
       this.duoxuan()
@@ -173,37 +181,40 @@
 </script>
 
 <style scoped="scoped">
-  @media screen and (min-width: 700px){
-  .container {
-    margin-top: 40px;
-    width: 700px;
-    height: 100%;
-    padding: 40px;
-    background: #fff;
-    border: 1px solid #eaeaea;
-    box-shadow: 0 0 25px #cac6c6;
+  @media screen and (min-width: 700px) {
+    .container {
+      margin-top: 40px;
+      width: 700px;
+      height: 100%;
+      padding: 40px;
+      background: #fff;
+      border: 1px solid #eaeaea;
+      box-shadow: 0 0 25px #cac6c6;
+    }
+
+    .title {
+      width: 100%;
+      height: 30px;
+      line-height: 30px;
+      font-size: 24px;
+      text-align: center;
+    }
+
+    .main {
+      margin-top: 20px;
+    }
+
+    .el-button {
+      margin-top: 20px;
+    }
   }
 
-  .title {
-    width: 100%;
-    height: 30px;
-    line-height: 30px;
-    font-size: 24px;
-    text-align: center;
-  }
-  .main{
-    margin-top: 20px;
-  }
-
-  .el-button {
-    margin-top: 20px;
-  }
-}
   @media screen and (max-width: 700px) {
     .container {
       width: 100%;
       height: 100%;
     }
+
     .title {
       width: 100%;
       height: 1.5rem;
@@ -211,7 +222,8 @@
       font-size: 1rem;
       text-align: center;
     }
-    .main{
+
+    .main {
       margin-top: 2rem;
     }
 

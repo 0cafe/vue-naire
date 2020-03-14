@@ -4,18 +4,21 @@
      密码 : <input type="password" size="small" placeholder="请输入密码" v-model="userData.a_password" class="form-control"/>
      <button class="btn btn-primary" @click="submitForm()">登录</button>
   </div> -->
-  <el-form :model="userData" label-position="left" label-width="0px" class=" login-container">
-  	<h3 class="title">系统登录</h3>
-  	<el-form-item prop="account">
-  		<el-input type="text" v-model="userData.a_username"  placeholder="账号"></el-input>
+  <el-form :model="userData" label-position="left" label-width="100px" class=" login-container">
+  	<h3 class="title">注册</h3>
+  	<el-form-item prop="account" label="用户名 :">
+  		<el-input type="text" v-model="userData.a_username" placeholder="账号"></el-input>
   	</el-form-item>
-  	<el-form-item prop="checkPass">
+  	<el-form-item prop="checkPass" label="密码 :">
   		<el-input type="password" v-model="userData.a_password"  placeholder="密码"></el-input>
   	</el-form-item>
+    <el-form-item prop="checkPass"label="确认密码 :">
+    	<el-input type="password" v-model="userData.password"  placeholder="密码"></el-input>
+    </el-form-item>
   	<!-- <el-checkbox v-model="checked" checked class="remember">记住密码</el-checkbox> -->
-  	<el-form-item>
-  		<el-button type="primary" style="" @click.native.prevent="submitForm()">登录</el-button>
-      <el-button type="primary" style="" @click.native.prevent="register()">注册</el-button>
+  	<el-form-item >
+  		<el-button type="primary"  @click.native.prevent="submitForm()">注册</el-button>
+      <el-button type="primary"  @click.native.prevent="login()">去登陆</el-button>
   		<!--<el-button @click.native.prevent="handleReset2">重置</el-button>-->
   	</el-form-item>
   </el-form>
@@ -23,7 +26,7 @@
 
 <script>
   import {post} from '@/axios/api.js'
-  import {errorToast,successToast} from '@/common/toast'
+  import {errorToast,successToast,warningToast} from '@/common/toast'
   export default{
     data(){
       return{
@@ -35,19 +38,19 @@
     },
     methods: {
       async submitForm() {
-        await post('/login',this.userData)
+        await post('/register',this.userData)
         .then(res=>{
-          if(res.error_code === 0){
-            this.$store.commit('getToken',res.result)
-            successToast('登录成功')
-            this.$router.replace('/')
+          if(!res.msg){
+            errorToast(res)
+            console.log(res)
           }else{
-            errorToast(res.msg)
+            successToast(res.msg)
+            window.location = "/#/login"
           }
         })
       },
-      register(){
-        this.$router.push('/register')
+      login(){
+        this.$router.push('/login')
       }
     },
   }
@@ -55,16 +58,12 @@
 
 <style lang="scss" scoped="scoped">
   .login-container{
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
   	-webkit-border-radius: 5px;
   	border-radius: 5px;
   	-moz-border-radius: 5px;
   	background-clip: padding-box;
   	margin: 180px auto;
-  	width:400px;
+  	width: 400px;
   	padding: 35px 35px 15px 35px;
   	background: #fff;
   	border: 1px solid #eaeaea;

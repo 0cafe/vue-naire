@@ -33,7 +33,7 @@ api.interceptors.request.use(
 // http response 拦截器   服务端有返回东西就不会走到error
 api.interceptors.response.use(
   response => {
-    if( response.status == 403 || response.data.error_code == 10000 ){
+    if( response.status == 403  ){
       localStorage.removeItem('token')
       localStorage.removeItem('username')
       alert('请先登录')

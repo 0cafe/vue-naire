@@ -6,7 +6,7 @@
       </div>
       <aside class="menu-expanded">
 
-        <el-menu background-color="#192a5e" text-color="white" active-text-color="" router default-active="/home/about"
+        <el-menu background-color="#192a5e" text-color="white" active-text-color="" router :default-active="$route.path"
           class="el-menu-vertical-demo">
           <template v-for="(item,i) in $router.options.routes" v-if="!item.hidden">
             <el-menu-item index="/home/about">
@@ -18,8 +18,8 @@
                 <i :class="item.icon"></i>
                 <span>{{item.name}}</span>
               </template>
-              <template v-for="(children,index) in item.children" v-if="item.children.length > 0 && children.path!='about'">
-                <el-menu-item :index="children.path">
+              <template v-for="(children,index) in item.children" v-if="item.children.length > 0 && children.path!='about' && !children.hidden ">
+                <el-menu-item :index="'/home/' + children.path">
                   <i :class="children.icon"></i>
                   {{children.name}}
                 </el-menu-item>
@@ -56,12 +56,17 @@
 
       <el-main :span="18">
         <div class="path">
-          <p>{{$router.currentRoute.matched[0].name}} / </p>{{$router.currentRoute.matched[1].name}}
+          <div>
+            <p>{{$router.currentRoute.matched[0].name}} / </p>{{$router.currentRoute.matched[1].name}}
+          </div>
+          <div class="back" v-if=" $route.path!='/home/about' && $route.path!='/home/list' " @click="back">返回</div>
         </div>
-        <router-view></router-view>
+        <div class="view">
+          <router-view></router-view>
+        </div>
       </el-main>
 
-      <el-footer>Footer</el-footer>
+     <!-- <el-footer>Footer</el-footer> -->
     </el-container>
   </el-container>
 
@@ -73,11 +78,21 @@
       return {
         parent: '',
         children: '',
-        path:''
+        path: ''
       }
     },
     methods: {
+      logout() {
+        localStorage.removeItem('token')
+        localStorage.removeItem('username')
+        this.$router.push('/login')
+      },
+      back() {
+        this.$router.back()
+      },
+      close() {
 
+      }
     },
     computed: {
       username() {
@@ -88,16 +103,20 @@
       // }
     },
     created() {
-     // console.log(this.$router)
-     let routes = this.$router.options.routes
+      // console.log(this.$router)
+      let routes = this.$router.options.routes
 
-     this.path = this.$router.path
-     // this.opends =
+      this.path = this.$router.path
+      // this.opends =
     }
   }
 </script>
 
 <style scoped lang="scss">
+  .el-container {
+    background-color: #f6f6f6;
+  }
+
   .el-header {
     height: 60px;
     background-color: #eef4f9;
@@ -170,18 +189,28 @@
   }
 
   .el-main {
-
     .path {
+      display: flex;
+      justify-content: space-between;
       width: 100%;
       height: 30px;
       line-height: 30px;
       color: #7794d1;
+
+      .back {
+        margin-right: 50px;
+        cursor: pointer;
+        font-size: 16px;
+      }
 
       p {
         display: inline;
         color: #999;
       }
     }
+
+    margin: 15px;
+    background-color: #FFFFFF;
   }
 
   body>.el-container {}

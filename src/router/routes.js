@@ -19,18 +19,24 @@ const routes = [
     component: () => import('@/views/login.vue')
   },
   {
+    path:'/register',
+    name:'登陆',
+    hidden:true,
+    component: () => import('@/views/register.vue')
+  },
+  {
     path:'/naire/:id',
     name:'问卷调查',
     hidden:true,
     component: () => import('@/views/naire.vue')
   },
-  ...naireRouter
-  // {
-  //   path: '*',
-  //   component: () => import('@/views/404'),
-  //   name: '404',
-  //   hidden: true
-  // }
+  ...naireRouter,
+  {
+    path: '*',
+    component: () => import('@/views/404'),
+    name: '404',
+    hidden: true
+  }
 ]
 
 export default routes
