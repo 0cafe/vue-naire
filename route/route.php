@@ -2,7 +2,7 @@
 /*
  * @Author: your name
  * @Date: 2020-03-02 17:22:06
- * @LastEditTime: 2020-03-17 10:24:03
+ * @LastEditTime: 2020-03-17 15:08:34
  * @LastEditors: Please set LastEditors
  * @Description: In User Settings Edit
  * @FilePath: \questionnaire\route\route.php
@@ -61,7 +61,7 @@ Route::group('', function () {
         // 按用户获取问卷列表
         Route::get('', 'api/v2.Naire/getNaireByUser')->middleware('Auth');
         //
-        Route::get(':id', 'api/v2.Naire/getNaire')->middleware('Auth');
+        Route::get(':id', 'api/v2.Naire/getNaire');
         //生成问卷
         Route::post('', 'api/v2.Naire/create')->middleware('Auth');
         //编辑问卷
