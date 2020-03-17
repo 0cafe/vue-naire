@@ -36,7 +36,7 @@ api.interceptors.response.use(
     if( response.status == 403  ){
       localStorage.removeItem('token')
       localStorage.removeItem('username')
-      alert('请先登录')
+      alert('登录失效,请重新登录')
       router.push('/login')
     }
     return response;

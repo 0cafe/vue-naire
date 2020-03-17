@@ -14,6 +14,7 @@ const naireRouter = [{
       meta: {
         requireAuth: true
       },
+      auth:1,
       hidden: true
     },
     {
@@ -21,6 +22,7 @@ const naireRouter = [{
       name: '问卷列表',
       icon: 'el-icon-reading',
       component: () => import('@/views/list.vue'),
+      auth:1,
       meta: {
         requireAuth: true
       }
@@ -30,6 +32,7 @@ const naireRouter = [{
       name: '新建问卷',
       icon: 'el-icon-document-add',
       component: () => import('@/views/add.vue'),
+      auth:1,
       meta: {
         requireAuth: true
       }
@@ -38,6 +41,7 @@ const naireRouter = [{
       path: '/edit/:id',
       name: '编辑问卷',
       hidden: true,
+      auth:1,
       icon: 'el-icon-document-add',
       component: () => import('@/views/edit.vue'),
       meta: {

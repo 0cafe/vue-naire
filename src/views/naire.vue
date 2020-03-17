@@ -6,7 +6,8 @@
 
     <div class="main">
       <div v-for="(item,i) in questions" class="item">
-        <p><span style="color: red;" v-if="item.q_isrequire == 1">*</span>{{i+1}}.{{item.q_content}}</p>
+        <p><span style="color: red;" v-if="item.q_isrequire == 1">*</span>{{i+1}}.{{item.q_content}}
+          <span style="color: f6f6f6!important;">({{item.q_type}})</span></p>
 
         <el-radio-group v-model="selectData[i]" v-if="item.q_type == '单选'" ref="radioM">
           <div v-for="(opt,index) in item.option" class="opt">
@@ -57,6 +58,11 @@
         await get('/naire/' + id)
           .then(res => {
             console.log(res)
+            if (!res) {
+              errorToast('没有找到此问卷')
+              this.$router.push('/home/list')
+              return
+            }
             if (res.n_status == 0) {
               errorToast('该问卷已截止')
               this.$router.push('/home/list')

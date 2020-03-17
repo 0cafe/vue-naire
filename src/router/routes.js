@@ -1,4 +1,5 @@
 import naireRouter from './stage/naireRouter.js'
+import adminRouter from './stage/adminRouter.js'
 // const login = () => import('@/views/login.vue')
 // const home = () => import('@/views/home.vue')
 
@@ -31,6 +32,7 @@ const routes = [
     component: () => import('@/views/naire.vue')
   },
   ...naireRouter,
+  ...adminRouter,
   {
     path: '*',
     component: () => import('@/views/404'),

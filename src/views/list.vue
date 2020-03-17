@@ -44,8 +44,17 @@
         </template>
       </el-table-column>
     </el-table>
+ 
     <result v-if="isResult" @close="close" :id="resultID"></result>
     <share-url v-if="isShare" @close="close" :url = "url"></share-url>
+    <el-pagination
+      background
+      layout="prev, pager, next"
+      @current-change="pageChange"
+      :total="totalCount"
+      :page-size="count"
+      >
+    </el-pagination>
   </div>
 </template>
 
@@ -79,14 +88,39 @@
         isEdit:false,
         editID:'',
         url:'',
-        isShare:false
+        isShare:false,
+        //分页参数
+        totalCount:10,
+        count:10,
+        page:1
       }
     },
     methods: {
-      async GetQuestion() {
-        await this.$api.get('/Naire')
+      async GetQuestion(count,page) {
+        let data = {
+          count:count,
+          page:page,
+          auth:localStorage.getItem('auth')
+        }
+        await get('/Naire',data)
           .then((res) => {
-            // console.log(res)
+            console.log(res)
+            this.totalCount = res.total
+            this.tableData = res.data
+          })
+        this.loading = false
+      },
+
+      // 管理员获取所有问卷
+      async GetQuestionByAdmin(count,page){
+        let data = {
+          count:count,
+          page:page
+        }
+        await get('/admin/naire',data)
+          .then((res) => {
+            console.log(res)
+            this.totalCount = res.total
             this.tableData = res.data
           })
         this.loading = false
@@ -120,6 +154,10 @@
           }
         })
       },
+      //换页
+      async pageChange(e){
+        this.GetQuestion(this.count,e)
+      },
 
       // 菜单 跳转结果
       toResult(id) {
@@ -147,7 +185,7 @@
 
     },
     async created() {
-      await this.GetQuestion();
+      await this.GetQuestion(this.count,this.page);
     }
   }
 </script>

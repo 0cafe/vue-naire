@@ -43,11 +43,9 @@ if (localStorage.token && localStorage.username) {
 router.beforeEach((to, from, next) => {
   // 获取 JWT Token
   if (to.meta.requireAuth ){
-    console.log('auh')
     // 判断该路由是否需要登录权限
     if (localStorage.getItem('token')) {
       // 通过获取当前的token是否存在
-      console.log('?')
       next()
     } else {
       next({
@@ -62,6 +60,7 @@ router.beforeEach((to, from, next) => {
     next()
   }
 })
+
 
 
 /* eslint-disable no-new */

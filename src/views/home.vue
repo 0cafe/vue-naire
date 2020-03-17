@@ -8,18 +8,22 @@
 
         <el-menu background-color="#192a5e" text-color="white" active-text-color="" router :default-active="$route.path"
           class="el-menu-vertical-demo">
+          <el-menu-item index="/home/about">
+            <i class="el-icon-info"></i>
+            <span>vue-naire-system</span>
+          </el-menu-item>
           <template v-for="(item,i) in $router.options.routes" v-if="!item.hidden">
-            <el-menu-item index="/home/about">
-              <i class="el-icon-info"></i>
-              <span>vue-naire-system</span>
-            </el-menu-item>
             <el-submenu :index="item.path">
               <template slot="title">
                 <i :class="item.icon"></i>
                 <span>{{item.name}}</span>
               </template>
-              <template v-for="(children,index) in item.children" v-if="item.children.length > 0 && children.path!='about' && !children.hidden ">
-                <el-menu-item :index="'/home/' + children.path">
+              <template v-for="(children,index) in item.children"
+               v-if="item.children.length > 0
+               && children.path!='about' && !children.hidden
+               && children.auth <= auth"
+               >
+                <el-menu-item :index="`${item.path}/` + children.path">
                   <i :class="children.icon"></i>
                   {{children.name}}
                 </el-menu-item>
@@ -66,7 +70,7 @@
         </div>
       </el-main>
 
-     <!-- <el-footer>Footer</el-footer> -->
+      <!-- <el-footer>Footer</el-footer> -->
     </el-container>
   </el-container>
 
@@ -85,6 +89,7 @@
       logout() {
         localStorage.removeItem('token')
         localStorage.removeItem('username')
+        localStorage.removeItem('auth')
         this.$router.push('/login')
       },
       back() {
@@ -98,6 +103,9 @@
       username() {
         return localStorage.username
       },
+      auth() {
+        return localStorage.auth
+      }
       // routePath(){
 
       // }
