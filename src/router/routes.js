@@ -29,7 +29,7 @@ const routes = [
     path:'/naire/:id',
     name:'问卷调查',
     hidden:true,
-    component: () => import('@/views/naire.vue')
+    component: () => import('@/views/view/naire.vue')
   },
   ...naireRouter,
   ...adminRouter,

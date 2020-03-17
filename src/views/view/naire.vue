@@ -1,5 +1,5 @@
 <template>
-  <div class="container" v-loading="loading">
+  <div class="container" v-loading="loading" v-if="!filled">
     <div class="title">
       {{dataArr.n_title}}
     </div>
@@ -25,20 +25,26 @@
     </div>
     <el-button type="primary" round @click="submit()">提交</el-button>
   </div>
+  <thanks v-else></thanks>
 </template>
 
 <script>
   import {
     post,
     get
-  } from '../axios/api.js'
+  } from '@/axios/api.js'
   import {
     errorToast,
     successToast
   } from '@/common/toast'
+  import thanks from './thanks.vue'
   export default {
+    components:{
+      thanks
+    },
     data() {
       return {
+        filled:false,
         n_id: '',
         dataArr: '',
         questions: '',
@@ -60,7 +66,7 @@
             console.log(res)
             if (!res) {
               errorToast('没有找到此问卷')
-              this.$router.push('/home/list')
+              this.$router.push('/*')
               return
             }
             if (res.n_status == 0) {
@@ -111,7 +117,8 @@
               successToast('内部错误')
             }
             successToast('提交成功')
-            this.$router.push('/home/list')
+            this.filled = true
+            // this.$router.push('/home/list')
           })
           .catch((err) => {
             errorToast(err)
@@ -196,6 +203,7 @@
       background: #fff;
       border: 1px solid #eaeaea;
       box-shadow: 0 0 25px #cac6c6;
+      margin-left: 30%;
     }
 
     .title {

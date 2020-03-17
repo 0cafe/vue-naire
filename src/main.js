@@ -33,7 +33,6 @@ window.onresize = function() {
 
 valitoken()
 
-
 if (localStorage.token && localStorage.username) {
   store.state.token = localStorage.token
   store.state.username = localStorage.username

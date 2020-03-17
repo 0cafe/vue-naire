@@ -5,7 +5,8 @@ export default function valitoken(){
     if(!res.token){
       localStorage.removeItem('token')
       localStorage.removeItem('username')
-      window.location = "/#/login"
+      localStorage.removeItem('auth')
+      // window.location = "/#/login"
       return false
     }
     return true
