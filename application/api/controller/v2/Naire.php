@@ -2,7 +2,7 @@
 /*
  * @Author: your name
  * @Date: 2020-03-02 17:24:20
- * @LastEditTime: 2020-03-13 14:37:20
+ * @LastEditTime: 2020-03-17 11:39:54
  * @LastEditors: Please set LastEditors
  * @Description: In User Settings Edit
  * @FilePath: \questionnaire\application\api\controller\v1\Naire.php
@@ -19,7 +19,7 @@ use think\facade\Request;
 use app\api\model\Options;
 use app\api\service\Token;
 use app\api\model\Result as ResultModel;
-
+use app\api\service\Login;
 class Naire
 {
 	/**
@@ -46,14 +46,17 @@ class Naire
 	public function getNaireByUser()
 	{
 		$id = Token::getNowToken('id');
-		$result = NaireModel::where('user_id', $id)->select();
-		return json($result);
-	}
-
-	public function clear()
-	{
-		QuestionModel::where('id', '>', '19')->delete();
-		Options::where('id', '>', '35')->delete();
+		$auth = Token::getNowToken('auth');
+		$params = Request::get();
+		if ($auth === 2) {
+			$naire = NaireModel::nairePage($params);
+			$naire = $naire->toArray();
+			return json($naire);
+		}
+		$query = ['user_id' => $id];
+		$naire = NaireModel::nairePage($params, $query);
+		$naire = $naire->toArray();
+		return json($naire);
 	}
 
 	/**
@@ -70,6 +73,7 @@ class Naire
 	 */
 	public function create()
 	{
+		Login::checkStatus();
 		$params = Request::post();
 		Db::startTrans();
 		try {
@@ -176,7 +180,7 @@ class Naire
 		}
 		$Naire->n_status = !$Naire->n_status;
 		$Naire->save();
-		return writeJson(201, [], '状态已经修改');
+		return writeJson(202, [], '状态修改成功');
 	}
 
 	/**
@@ -185,6 +189,18 @@ class Naire
 	public function delete($id)
 	{
 
+		$uid = Token::getNowToken('id');
+		$auth = Token::getNowToken('auth');
+		$naire = NaireModel::get($id);
+		if ($auth === 1) {
+			if ($naire->user_id !== $uid) {
+				throw new ComException([
+					'code' => 401,
+					'msg' => '问卷和用户不匹配',
+					'error_code' => 40100
+				]);
+			}
+		}
 		Db::startTrans();
 		try {
 			NaireModel::destroy($id);
@@ -199,5 +215,29 @@ class Naire
 			Db::rollBack();
 			throw new Exception($e);
 		}
+	}
+
+
+	/**
+	 * 分页获取所有发布中
+	 */
+	public function getIn()
+	{
+		$params = Request::get();
+		$query = ['n_status' => 1];
+		$naire = NaireModel::nairePage($params, $query);
+		$naire = $naire->toArray();
+		return json($naire);
+	}
+
+	/**
+	 * 管理员分页获取所有问卷
+	 */
+	public function getAll()
+	{
+		$params = Request::get();
+		$naire = NaireModel::nairePage($params);
+		$naire = $naire->toArray();
+		return json($naire);
 	}
 }

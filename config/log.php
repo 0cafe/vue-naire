@@ -2,8 +2,8 @@
 /*
  * @Author: your name
  * @Date: 2020-03-02 17:22:06
- * @LastEditTime: 2020-03-03 09:43:41
- * @LastEditors: your name
+ * @LastEditTime: 2020-03-17 11:16:24
+ * @LastEditors: Please set LastEditors
  * @Description: In User Settings Edit
  * @FilePath: \questionnaire\config\log.php
  */
@@ -24,9 +24,9 @@ return [
     // 日志记录方式，内置 file socket 支持扩展
     'type'        => 'File',
     // 日志保存目录
-    'path'        => '../runtime/',
+    'path'        => '',
     // 日志记录级别
-    'level'       => [],
+    'level'       => ['error','debug'],
     // 单文件日志写入
     'single'      => false,
     // 独立日志级别

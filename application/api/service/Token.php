@@ -2,7 +2,7 @@
 /*
  * @Author: your name
  * @Date: 2020-03-02 17:24:20
- * @LastEditTime: 2020-03-12 17:03:51
+ * @LastEditTime: 2020-03-17 11:37:02
  * @LastEditors: Please set LastEditors
  * @Description: In User Settings Edit
  * @FilePath: \questionnaire\application\api\service\Token.php
@@ -14,9 +14,9 @@ namespace app\api\service;
 
 use think\facade\Cache;
 use app\api\model\Admin as AdminModel;
+use app\lib\exception\AuthException;
 use app\lib\exception\ComException;
-use think\Exception;
-use think\facade\Request;
+use app\lib\auth\Status;
 
 class Token
 {
@@ -47,21 +47,24 @@ class Token
     }
 
     // 将令牌存入缓存
-    public function saveToken($id, $username)
+    public function saveToken($id, $username, $auth)
     {
         $value = [
             'id' => $id,
-            'username' => $username
+            'username' => $username,
+            'auth' => $auth
         ];
         //        $value = json_encode($value);   //存进缓存前 先存成字符串
         $token = self::generateToken();
-        $_cache = Cache($token, $value, 7200); //(令牌作为键，id为值，有效时间）
+        $_cache = Cache::store('redis')->set($token, $value, config('setting.token_time')); //(令牌作为键，id为值，有效时间）
         return $token;                         //这里返回token !!!!!!!!!!!!!!!!!!
     }
 
     public static function getNowToken($key)       //获取缓存里的token数据
     {
-        $token = self::getHeader();
+        // $token = self::getHeader();
+        $ao = request()->header('authorization');
+        $token = explode(' ', $ao)[1];
         if (!$token) {
             throw new ComException([
                 'code' => 403,
@@ -69,7 +72,7 @@ class Token
                 'error_code' => 10000
             ]);
         }
-        $vars = Cache::get($token);
+        $vars = Cache::store('redis')->get($token);
         if (!$vars) {
             throw new ComException([
                 'code' => 403,
@@ -82,12 +85,9 @@ class Token
     }
 
 
-    public function getToken($username)
+    public function getToken($username, $id, $auth)
     {
-        $admin = new AdminModel();
-        $admin = $admin::where('a_username', '=', $username)->find();
-        $id = $admin->id;
-        $token = $this->saveToken($id, $username);
+        $token = $this->saveToken($id, $username, $auth);
         return $token;
     }
 
@@ -101,7 +101,7 @@ class Token
         if (!$token) {
             return false;
         }
-        $vars = Cache::get($token);
+        $vars = Cache::store('redis')->get($token);     
         if (!$vars) {
             return false;
         }
@@ -113,5 +113,19 @@ class Token
         $ao = request()->header('authorization');
         $token = explode(' ', $ao)[1];
         return $token;
+    }
+
+
+    /**
+     * 验证权限
+     * return auth
+     */
+    public static function valAuth()
+    {
+        $auth = self::getNowToken('auth');
+        if (!$auth) {
+            throw new AuthException();
+        }
+        return $auth;
     }
 }

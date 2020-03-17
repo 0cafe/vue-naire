@@ -1,4 +1,12 @@
 <?php
+/*
+ * @Author: your name
+ * @Date: 2020-03-02 17:22:06
+ * @LastEditTime: 2020-03-17 10:40:17
+ * @LastEditors: your name
+ * @Description: In User Settings Edit
+ * @FilePath: \questionnaire\config\cache.php
+ */
 // +----------------------------------------------------------------------
 // | ThinkPHP [ WE CAN DO IT JUST THINK ]
 // +----------------------------------------------------------------------
@@ -14,12 +22,30 @@
 // +----------------------------------------------------------------------
 
 return [
-    // 驱动方式
-    'type'   => 'File',
-    // 缓存保存目录
-    'path'   => '',
-    // 缓存前缀
-    'prefix' => '',
-    // 缓存有效期 0表示永久缓存
-    'expire' => 0,
+    // 缓存配置为复合类型
+    'type'  =>  'complex',
+ 
+    'default'	=>	[
+        'type'	=>	'file',
+        // 全局缓存有效期（0为永久有效）
+        'expire'=>  0,
+        // 缓存前缀
+        'prefix'=>  '',
+        // 缓存目录
+        'path'  =>  '',
+    ],
+ 
+    // 需要安装依赖composer require predis/predis
+    'redis'	=>	[
+        'type'	=>	'redis',
+        'host'	=>	'127.0.0.1',
+        'port' => 6379,
+        // 'password' => 'xxxxxxxx',
+        // 全局缓存有效期（0为永久有效）
+        //        'expire'=>  0,
+        // 缓存前缀
+        // 'prefix'=>  'think:',
+        // 'timeout'=> 3600
+    ],
+    // 添加更多的缓存类型设置
 ];

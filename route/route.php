@@ -2,7 +2,7 @@
 /*
  * @Author: your name
  * @Date: 2020-03-02 17:22:06
- * @LastEditTime: 2020-03-14 17:17:38
+ * @LastEditTime: 2020-03-17 10:24:03
  * @LastEditors: Please set LastEditors
  * @Description: In User Settings Edit
  * @FilePath: \questionnaire\route\route.php
@@ -55,6 +55,7 @@ Route::group('', function () {
     //登陆
     Route::post('login', 'api/admin.Login/Login');
     Route::get('valid', 'api/admin.Login/validToken');
+    Route::put('pwd', 'api/admin.Pwd/changePwd');
 
     Route::group('naire', function () {
         // 按用户获取问卷列表
@@ -71,8 +72,19 @@ Route::group('', function () {
         Route::delete(':id', 'api/v2.Naire/delete')->middleware('Auth');
         //回答
         Route::post('/answer', 'api/v2.Naire/answer');
+        // 获取所有发布中的问卷
+        Route::get('/in', 'api/v2.Naire/getIn');
     });
-
     Route::delete('question/:id', 'api/v2.Question/delete')->middleware('Auth');
     Route::delete('option/:id', 'api/v2.Option/delete')->middleware('Auth');
+
+    // Route::get('/naire/all','api/v2.Naire/getAll');
+    Route::get('/naire/in', 'api/v2.Naire/getIn');
+    Route::group('admin', function () {
+        //问卷
+        Route::get('/naire', 'api/v2.Naire/getAll');
+        //用户
+        Route::get('/user', 'api/admin.User/getUsers');
+        Route::put('/user/:id', 'api/admin.User/modifyUserStatus');
+    })->middleware('AdminAuth');
 })->allowCrossDomain();
