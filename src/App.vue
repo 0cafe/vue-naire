@@ -11,6 +11,10 @@ export default {
   components: {
 
   },
+  //app全部渲染出来后隐藏加载
+  mounted() {
+    document.getElementById('loader').style.display = 'none'
+  }
 }
 </script>
 
