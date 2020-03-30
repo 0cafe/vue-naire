@@ -1,5 +1,5 @@
 <template>
-  <div class="container" v-loading="loading" v-if="!filled">
+  <div class="container" v-loading="loading" v-if="!filled && !over">
     <div class="title">
       {{dataArr.n_title}}
     </div>
@@ -11,7 +11,7 @@
 
         <el-radio-group v-model="selectData[i]" v-if="item.q_type == '单选'" ref="radioM">
           <div v-for="(opt,index) in item.option" class="opt">
-            <el-radio :label="opt">{{opt.o_value}}</el-radio>
+            <el-radio :label="opt" size="medium">{{opt.o_value}}</el-radio>
           </div>
         </el-radio-group>
 
@@ -25,7 +25,7 @@
     </div>
     <el-button type="primary" round @click="submit()">提交</el-button>
   </div>
-  <thanks v-else></thanks>
+  <thanks v-else :over="over"></thanks>
 </template>
 
 <script>
@@ -39,12 +39,13 @@
   } from '@/common/toast'
   import thanks from './thanks.vue'
   export default {
-    components:{
+    components: {
       thanks
     },
     data() {
       return {
-        filled:false,
+        over: false,
+        filled: false,
         n_id: '',
         dataArr: '',
         questions: '',
@@ -71,7 +72,7 @@
             }
             if (res.n_status == 0) {
               errorToast('该问卷已截止')
-              this.$router.push('/home/list')
+              this.over = true
               return
             }
             this.dataArr = res
@@ -194,7 +195,7 @@
 </script>
 
 <style scoped="scoped">
-  @media screen and (min-width: 700px) {
+  @media screen and (min-width: 800px) {
     .container {
       margin-top: 40px;
       width: 700px;
@@ -203,7 +204,7 @@
       background: #fff;
       border: 1px solid #eaeaea;
       box-shadow: 0 0 25px #cac6c6;
-      margin-left: 30%;
+      margin:40px auto;
     }
 
     .title {
@@ -221,12 +222,21 @@
     .el-button {
       margin-top: 20px;
     }
+
+    .el-radio {
+      margin: 5px 0;
+    }
+
+    .el-checkbox {
+      margin: 5px 0;
+    }
   }
 
-  @media screen and (max-width: 700px) {
+  @media screen and (max-width: 800px) {
     .container {
       width: 100%;
       height: 100%;
+      font-size: 0.8rem;
     }
 
     .title {
@@ -239,10 +249,23 @@
 
     .main {
       margin-top: 2rem;
+      margin-left: 2rem;
     }
 
     .item {
       margin: 15px;
+    }
+
+    .el-radio {
+      margin: 0.3rem 0;
+    }
+
+    .el-checkbox {
+      margin: 0.3rem 0;
+    }
+
+    .el-button {
+      margin-left: 40%;
     }
 
     .opt {}

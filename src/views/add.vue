@@ -103,7 +103,7 @@
             this.$router.push('/home/list')
             return
           } else {
-            errorToast(res.msg)
+            errorToast(res.msg || res)
             return
           }
         })

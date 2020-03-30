@@ -1,6 +1,7 @@
 <template>
   <div class="container">
-      <div>感谢参与调查  ^_^</div>
+      <div v-if="!over">感谢参与调查  ^_^</div>
+      <div v-if="over">该问卷已截止</div>
       <div>
         <router-link to='/'>
           去后台
@@ -10,6 +11,9 @@
 </template>
 
 <script>
+  export default{
+    props:['over']
+  }
 
 </script>
 

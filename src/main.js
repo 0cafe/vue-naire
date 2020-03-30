@@ -25,15 +25,16 @@ function flex() {
   console.log("屏幕宽度：" + htmlwidth)
   let htmlDom = document.getElementsByTagName('html')[0];
   htmlDom.style.fontSize = htmlwidth / 20 + 'px';
+  console.log(htmlDom.style.fontSize)
 }
 flex();
 window.onresize = function() {
   flex();
 }
 
-valitoken()
 
 if (localStorage.token && localStorage.username) {
+  valitoken()
   store.state.token = localStorage.token
   store.state.username = localStorage.username
 }

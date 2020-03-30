@@ -4,7 +4,7 @@
       <el-table-column prop="create_time" label="创建时间" width="200">
       </el-table-column>
 
-      <el-table-column prop="n_title" label="问卷标题" width="600">
+      <el-table-column prop="n_title" label="问卷标题" width="400">
         <template slot-scope="scope">
           <router-link :to="'/naire/'+scope.row.id">
             {{scope.row.n_title}}
@@ -22,7 +22,7 @@
         </template>
 
       </el-table-column>
-      <el-table-column label="操作" width="300">
+      <el-table-column label="操作" width="200">
         <template slot-scope="scope">
           <!-- <router-link :to="'/result/' + scope.row.n_id">
        <el-button type="primary" size="small">查看结果</el-button>
@@ -44,10 +44,11 @@
         </template>
       </el-table-column>
     </el-table>
- 
+
     <result v-if="isResult" @close="close" :id="resultID"></result>
     <share-url v-if="isShare" @close="close" :url = "url"></share-url>
     <el-pagination
+     v-if="!isResult"
       background
       layout="prev, pager, next"
       @current-change="pageChange"
@@ -137,7 +138,7 @@
             .then(res => {
               if (res.data.error_code === 0) {
                 successToast(res.data.msg)
-                this.GetQuestion();
+                this.GetQuestion(this.count,this.page);
               }
             })
         })

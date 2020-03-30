@@ -23,7 +23,8 @@
         questions: [],
         options: [],
         result: [],
-        loading: true
+        loading: true,
+        total:''
       }
     },
     methods: {
@@ -48,6 +49,7 @@
         await this.$api.get('/v1/result/' + id)
           .then(res => {
             // console.log(res.data)
+            this.total = res.data.length
             this.result = res.data
           })
       },
@@ -115,7 +117,10 @@
             title: {
               text: data.q_content
             },
-            tooltip: {},
+            tooltip: {
+              trigger: 'item',
+              formatter: "{a} <br/>{b} : {c}"
+            },
             xAxis: {
               data: xData, // ["2013年6月", "2014年6月", "2015年6月", "2016年6月"]
               axisLabel: {
@@ -138,7 +143,7 @@
           })
           // 多选题
         } else if (data.q_type == '多选') {
-          console.log(this.checkBoxResult(this.result, data.id))
+          // console.log(this.checkBoxResult(this.result, data.id))
           let obj = this.checkBoxResult(this.result, data.id)
           let value;
           let name;
@@ -162,7 +167,7 @@
             color: ['#CD5C5C', '#00CED1', '#9ACD32', '#FFC0CB'],
             stillShowZeroSum: false,
             series: [{
-              name: 'bug分布',
+              name: '选择人数',
               type: 'pie',
               radius: '80%',
               center: ['60%', '60%'],
@@ -235,6 +240,7 @@
     font-size: 0.2rem;
     cursor: pointer;
     color: #0a8fee !important;
+    margin-right: 100px;
   }
 
   .ntitle {
@@ -248,7 +254,7 @@
   }
 
   .chart {
-    width: 50%;
+    width: 600px;
     height: 300px;
     margin: 50px auto;
   }

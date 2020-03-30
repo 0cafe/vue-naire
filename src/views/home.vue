@@ -2,7 +2,7 @@
   <el-container>
     <el-aside width="200px">
       <div class="head">
-        cms
+
       </div>
       <aside class="menu-expanded">
 
@@ -127,7 +127,8 @@
 
   .el-header {
     height: 60px;
-    background-color: #eef4f9;
+    // background-color: #eef4f9;
+    background-image: linear-gradient(to right,#a7bfe8,#eef4f9);
 
     .userinfo {
       line-height: 60px;
@@ -175,7 +176,7 @@
       width: 230px;
       line-height: 60px;
       font-size: 28px;
-      color: #7794d1;
+      color: #FFFFFF;
     }
 
     .logo-collapse-width {
@@ -188,6 +189,7 @@
     // border: .5px solid #1111;
     min-height: 100vh;
     background-color: #192a5e;
+    // background-image: Liner-gradient;
 
     .head {
       height: 60px;

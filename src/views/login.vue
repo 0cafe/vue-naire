@@ -1,9 +1,4 @@
 <template>
-  <!-- <div class="box">
-    账号 :<input type="text" size="small" placeholder="请输入账号" v-model="userData.a_username" class="form-control" />
-     密码 : <input type="password" size="small" placeholder="请输入密码" v-model="userData.a_password" class="form-control"/>
-     <button class="btn btn-primary" @click="submitForm()">登录</button>
-  </div> -->
   <el-form :model="userData" label-position="left" label-width="0px" class=" login-container">
   	<h3 class="title">系统登录</h3>
   	<el-form-item prop="account">
@@ -12,11 +7,9 @@
   	<el-form-item prop="checkPass">
   		<el-input type="password" v-model="userData.a_password"  placeholder="密码"></el-input>
   	</el-form-item>
-  	<!-- <el-checkbox v-model="checked" checked class="remember">记住密码</el-checkbox> -->
   	<el-form-item>
   		<el-button type="primary" style="" @click.native.prevent="submitForm()">登录</el-button>
       <el-button type="primary" style="" @click.native.prevent="register()">注册</el-button>
-  		<!--<el-button @click.native.prevent="handleReset2">重置</el-button>-->
   	</el-form-item>
   </el-form>
 </template>
