@@ -2,7 +2,7 @@
 /*
  * @Author: your name
  * @Date: 2020-03-02 17:24:20
- * @LastEditTime: 2020-03-17 10:46:21
+ * @LastEditTime: 2020-03-19 14:37:29
  * @LastEditors: Please set LastEditors
  * @Description: In User Settings Edit
  * @FilePath: \questionnaire\application\api\controller\admin\Login.php
@@ -42,8 +42,7 @@ class Login
             ];
             $admin->update($udata, ['id' => $adminData->id]);
             $auth = $adminData->auth;
-            //session
-            //在'admin_scope'作用域下给 'admin' 赋值 $adminData
+
             $token = (new Token())->getToken($data['a_username'],$adminData->id,$auth);
             return writeJson(
                 201,

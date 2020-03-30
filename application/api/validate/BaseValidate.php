@@ -2,8 +2,8 @@
 /*
  * @Author: your name
  * @Date: 2020-03-13 17:08:12
- * @LastEditTime: 2020-03-13 17:09:29
- * @LastEditors: your name
+ * @LastEditTime: 2020-03-27 15:19:27
+ * @LastEditors: Please set LastEditors
  * @Description: In User Settings Edit
  * @FilePath: \questionnaire\application\api\validate\BaseValidate.php
  */
@@ -49,8 +49,14 @@ class BaseValidate extends Validate
     // 不包括特殊符
     protected function normal($value)
     {
-        $rule = '/\!|\$|\%|\*|\?|\||\s+/';
+        $rule = '/\!|\$|\%|\*|\?|\||\~|\/|\@|\^|\&|\`|\=|\\\|\！|\<|\《|\>|\》|\(|\)|\（|\）|\s+/';
         $result = preg_match($rule, $value);
-        return $result ? '不能含有特殊字符' : true;
+        return $result ? '不能含有非法字符' : true;
+    }
+
+    protected function noSpecial($value)
+    {
+        $rule = '^[\u4e00-\u9fa5_a-zA-Z0-9]+$';
+        $result = preg_match($rule, $value);
     }
 }

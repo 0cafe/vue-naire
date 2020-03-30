@@ -2,7 +2,7 @@
 /*
  * @Author: your name
  * @Date: 2020-03-02 17:24:20
- * @LastEditTime: 2020-03-17 11:39:54
+ * @LastEditTime: 2020-03-26 17:24:59
  * @LastEditors: Please set LastEditors
  * @Description: In User Settings Edit
  * @FilePath: \questionnaire\application\api\controller\v1\Naire.php
@@ -20,6 +20,8 @@ use app\api\model\Options;
 use app\api\service\Token;
 use app\api\model\Result as ResultModel;
 use app\api\service\Login;
+use app\api\validate\NaireValidate;
+
 class Naire
 {
 	/**
@@ -30,13 +32,6 @@ class Naire
 		$result = new ResultModel();
 		$params = Request::post();
 		$result = $result->allowField(true)->saveAll($params);  //过滤非表单字段value 不然会插入失败	
-		// if(!$result || empty($result)){
-		// 	throw new ComException([
-		// 		'code' => 500,
-		// 		'error_code' => 30000,
-		// 		'msg' => '内部错误'
-		// 	]);
-		// }    
 		return writeJson(201, '', '提交成功');
 	}
 
@@ -84,7 +79,11 @@ class Naire
 				'n_status' => $params['n_status'],
 				'user_id' => $id
 			];
-			// $Naire = (new NaireModel())->allowField(true)->save($params);		
+			// $Naire = (new NaireModel())->allowField(true)->save($params);
+			$NaireValidate = new NaireValidate();
+			if (!$NaireValidate->check($tdata)) {
+				return $NaireValidate->getError();
+			}
 			$Naire = NaireModel::create($tdata);
 			$nid = $Naire->id;
 			$qusetions = $params['questions'];
