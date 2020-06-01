@@ -60,6 +60,7 @@ router.beforeEach((to, from, next) => {
     next()
   }
 })
+console.log(process.env.NODE_ENV)
 
 
 

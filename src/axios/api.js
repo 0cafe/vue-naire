@@ -3,13 +3,20 @@ import axios from 'axios'
 import QS from 'qs'
 import router from '@/router'
 
+// 根据生产环境和开发环境切换接口
+const proEnv = require('../../config/prod.env')
+const devEnv = require('../../config/dev.env')
+var base;
+if (process.env.NODE_ENV === 'production') {
+  base = proEnv.BASE_URL
+} else {
+  base = devEnv.BASE_URL
+}
+
 const config = {
-  baseURL: baseURL || '',
+  baseURL: base || '',
   timeout: 10 * 1000, // 请求超时时间设置
   crossDomain: true,
-  // withCredentials: true, // Check cross-site Access-Control
-  // 定义可获得的http响应状态码
-  // return true、设置为null或者undefined，promise将resolved,否则将rejected
   validateStatus(status) {
     return status >= 200 && status < 510
   }
@@ -33,7 +40,7 @@ api.interceptors.request.use(
 // http response 拦截器   服务端有返回东西就不会走到error
 api.interceptors.response.use(
   response => {
-    if( response.status == 403  ){
+    if (response.status == 403) {
       localStorage.removeItem('token')
       localStorage.removeItem('username')
       localStorage.removeItem('auth')
@@ -43,7 +50,7 @@ api.interceptors.response.use(
     return response;
   },
   error => {
-     console.log(error)
+    console.log(error)
     if (error.response) {
       switch (error.response.status) {
         case 403:
