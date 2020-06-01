@@ -25,9 +25,9 @@ return [
     // 数据库名
     'database'        => 'questionnaire',
     // 用户名
-    'username'        => 'root',
+    'username'        => 'questionnaire',
     // 密码
-    'password'        => 'root',
+    'password'        => 'zwh7896',
     // 端口
     'hostport'        => '',
     // 连接dsn
